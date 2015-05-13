@@ -137,8 +137,8 @@ if($towerurl == null) {
 						<div class="panel panel-default">
 							<div class="panel-heading"><strong>Control Towers</strong></div>
 							
-							<?php if($towerurl != null) { ?>
 							<div class="panel-body">
+							<?php if($towerurl != null) { ?>
 								<?php echo $tower; ?><br />
 							<?php } ?>
 							
