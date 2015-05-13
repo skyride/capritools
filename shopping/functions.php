@@ -48,7 +48,7 @@ function saveList($data) {
 	//Save data to paste
 	$pasteKey = savePaste($data);
 	
-	$key = sha1("vinceiscoolthough" . $id);
+	$key = sha1("thenewguyfromdownstairs" . $id);
 	$st = $db->prepare("UPDATE shoppingLists SET `key`=:key,`pasteKey`=:pasteKey WHERE id=:id LIMIT 1");
 	$st->bindValue(":key", $key, PDO::PARAM_STR);
 	$st->bindValue(":pasteKey", $pasteKey, PDO::PARAM_STR);
@@ -86,7 +86,7 @@ function savePaste($data) {
 	
 	//Get id and create key
 	$id = $db->lastInsertId();
-	$key = sha1("mittensisgayirl" . $id);
+	$key = sha1("grrrrfalcons" . $id);
 	$st = $db->prepare("UPDATE pastes SET `key`=:key WHERE id=:id LIMIT 1");
 	$st->bindValue(":key", $key, PDO::PARAM_STR);
 	$st->bindValue(":id", $id, PDO::PARAM_INT);

@@ -89,7 +89,7 @@ function saveDscan($dscan) {
 	
 	//Get id and create key
 	$id = $db->lastInsertId();
-	$key = sha1("mittensisgay" . $id);
+	$key = sha1("cloakypilgrim" . $id);
 	$st = $db->prepare("UPDATE dscanScans SET `key`=:key WHERE id=:id LIMIT 1");
 	$st->bindValue(":key", $key, PDO::PARAM_STR);
 	$st->bindValue(":id", $id, PDO::PARAM_INT);

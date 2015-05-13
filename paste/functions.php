@@ -13,7 +13,7 @@ function savePaste($data) {
 	
 	//Get id and create key
 	$id = $db->lastInsertId();
-	$key = sha1("mittensisgayirl" . $id);
+	$key = sha1("grrrrfalcons" . $id);
 	$st = $db->prepare("UPDATE pastes SET `key`=:key WHERE id=:id LIMIT 1");
 	$st->bindValue(":key", $key, PDO::PARAM_STR);
 	$st->bindValue(":id", $id, PDO::PARAM_INT);
