@@ -1,0 +1,37 @@
+.mono {
+	font-family: "Lucida Console", Monaco, monospace;
+}
+
+.evelogo {
+	border-radius: 3px 3px 3px 3px;
+	-moz-border-radius: 3px 3px 3px 3px;
+	-webkit-border-radius: 3px 3px 3px 3px;
+	float: left;
+	margin-top: -9px;
+	margin-right: 10px;
+	margin-left: -10px;
+	width: 38px;
+}
+
+.bgticker {
+	position: absolute;
+	right: 50px;
+	top: -10px;
+	font-family: Impact, fantasy, Inconsolata;
+	font-size: 44px;
+	opacity: 0.06;
+}
+
+.progress {
+	margin-bottom: 12px;
+	height: 20px;
+}
+
+.progress .progress-bar {
+font-size: 12px;
+line-height: 20px;
+}
+
+.selected {
+	box-shadow: inset 0px 0px 6px 0px rgba(255,255,255,1);
+}

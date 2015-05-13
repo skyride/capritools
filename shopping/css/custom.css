@@ -1,0 +1,54 @@
+.mono {
+	font-family: "Lucida Console", Monaco, monospace;
+}
+
+.r64 {
+	background: #ff2200;
+}
+
+.r32 {
+	background: #ff8800;
+}
+
+.r16 {
+	background: #ffcc00;
+}
+
+.r8 {
+	background: #ffff00;
+}
+
+.mineral-link {
+}
+
+.rtype {
+	color: #444;
+}
+
+.itemlogo {
+	border-radius: 3px 3px 3px 3px;
+	-moz-border-radius: 3px 3px 3px 3px;
+	-webkit-border-radius: 3px 3px 3px 3px;
+	float: left;
+	margin-top: 0px;
+	margin-right: 10px;
+	width: 32px;
+}
+
+.autocomplete {
+	width: 100%;
+	border-radius: 4px;
+	border: 2px solid #dce4ec;
+	padding: 0px;
+	max-height: 300px;
+	overflow-y: auto;
+}
+
+.noselect {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}

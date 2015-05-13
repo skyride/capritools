@@ -1,0 +1,5 @@
+Options -Indexes
+RewriteEngine On
+RewriteRule	^items.js$ items.php
+RewriteRule	^api.json$ api.php
+RewriteRule	^([0-9a-zA-Z]+)$ index.php?data=$1
