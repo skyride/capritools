@@ -15,6 +15,8 @@ function addmineral($id, $name, $class) {
 	$m['id'] = $id;
 	$m['name'] = $name;
 	$m['class'] = $class;
+	$m['sell'] = getSell($id);
+	$m['buy'] = getBuy($id);
 	$minerals[] = $m;
 }
 
@@ -47,6 +49,13 @@ function getBuy($id) {
 	$json = getEveCentralData($id);
 	return $json['buy']['fivePercent'];
 }
+
+$blocks = array(
+	array("name" => "Amarr Fuel Block", "id" => 4247, "sell" => getSell(4247), "buy" => getBuy(4247)),
+	array("name" => "Gallente Fuel Block", "id" => 4312, "sell" => getSell(4312), "buy" => getBuy(4312)),
+	array("name" => "Minmatar Fuel Block", "id" => 4246, "sell" => getSell(4246), "buy" => getBuy(4246)),
+	array("name" => "Caldari Fuel Block", "id" => 4051, "sell" => getSell(4051), "buy" => getBuy(4051))
+);
 
 //Control Tower data
 addtower(12235, "Amarr Large", 4247, 40);
@@ -98,6 +107,8 @@ if(!isset($_GET['data'])) {
 
 	<!-- Latest compiled and minified CSS -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+	<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/1.4.5/numeral.min.js"></script>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
 	<?php include("../../switcher.php"); ?>
 	<link rel="stylesheet" href="/quickmath/css/custom.css">
@@ -106,101 +117,160 @@ if(!isset($_GET['data'])) {
 
 
 	<!-- Custom Page CSS -->
+	
+	<script type="text/javascript">
+		var app = angular.module('myApp', []);
+		app.controller('myCtrl', function($scope, $http, $location) {
+			$scope.minerals = <? echo json_encode($minerals); ?>;
+			$scope.towers = <? echo json_encode($towers); ?>;
+			$scope.blocks = <? echo json_encode($blocks); ?>;
+			
+			$scope.active = 16214;
+			$scope.sovbonus = false;
+			
+			$scope.isk = function(isk) {
+				return numeral(isk).format('0,0.00') + " ISK";
+			};
+			
+			
+			$scope.getFuelCost = function() {
+				var tower = $scope.getTower($scope.active);
+				var block = $scope.getBlock(tower.blockid);
+				var cost = block.sell * tower.usage * 24 * 30;
+				if($scope.sovbonus == true) {
+					cost = cost * 0.75;
+				}
+				console.log(block);
+				return cost;
+			};
+			
+			$scope.income = function(sell) {
+				return sell * 100 * 30 * 24;
+			}
+			
+			$scope.profitClass = function(isk) {
+				if(isk >= 0) {
+					return "text-success";
+				} else {
+					return "text-danger";
+				}
+			}
+			
+			
+			$scope.getMineral = function(id) {
+				for(i = 0; i < $scope.minerals.length; i++) {
+					if($scope.minerals[i].id == id) {
+						return $scope.minerals[i];
+					}
+				}
+			};
+			
+			$scope.getTower = function(id) {
+				for(i = 0; i < $scope.towers.length; i++) {
+					if($scope.towers[i].id == id) {
+						return $scope.towers[i];
+					}
+				}
+			};
+			
+			$scope.getBlock = function(id) {
+				for(i = 0; i < $scope.blocks.length; i++) {
+					if($scope.blocks[i].id == id) {
+						return $scope.blocks[i];
+					}
+				}
+			};
+		});
+	</script>
 </head>
 <body>
 	
 	<?php include("../../header.php"); ?>
 
-
-	<div class="container">
-		<div class="starter-template">
-			<h1>Moon Goo Profitability</h1>
-			
-			<select name="towertype" style="color: rgb(44, 62, 80);" onchange="window.location.href='/quickmath/moongoo/'+this.value">
-				<?php foreach($towers as $t) { ?>
-					<option value="<?php echo $t['id']; ?>"<?php if($tower == $t['id']) { echo ' selected="selected"'; $tower = $t;} ?>><?php echo $t['name']; ?></option>
-				<?php } ?>
-			</select>
-			
-			<table class="table table-striped table-hover" id="minerals">
-				<thead>
-					<tr>
-						<th></th>
-						<th></th>
-						<th>Mineral</th>
-						<th class="text-right">Sell (per unit)</th>
-						<th class="text-right">Income</th>
-						<th class="text-right">Fuel Cost</th>
-						<th class="text-right">Profit</th>
-					</tr>
-				</thead>
-				<tbody>
-					<?php foreach($minerals as $m) { 
-						$sell = getSell($m['id']);
-						$income = $sell * 100 * 24 * 30;
-						$fuelcost = getSell($tower['blockid']) * $tower['usage'] * 24 * 30;
-						$profit = $income - $fuelcost;
-						if($profit > 0) {
-							$profitclass = 'class="text-success"';
-						} else {
-							$profitclass = 'class="text-danger"';
-						}
-						?>
-					<tr>
-						<td class="r<?php echo $m['class']; ?>" align="center" width="30"><strong><span class="rtype">R<?php echo $m['class']; ?></span></strong></td>
-						<td style="background: url('https://image.eveonline.com/Type/<?php echo $m['id']; ?>_32.png') no-repeat 4px 4px; width: 32px;">&nbsp</td>
-						<td><a class="mineral-link" style="text-decoration: none;" href="https://eve-central.com/home/quicklook.html?typeid=<?php echo $m['id']; ?>"><?php echo $m['name']; ?></a></td>
-						<td align="right"><?php echo isk($sell); ?></td>
-						<td align="right"><?php echo isk($income); ?></td>
-						<td align="right"><?php echo isk($fuelcost); ?></td>
-						<td align="right" <?echo $profitclass; ?>><?php echo isk($profit); ?></td>
-					</tr>
+	<div id="app" ng-app="myApp" ng-controller="myCtrl">
+		<div class="container">
+			<div class="starter-template">
+				<h1>Moon Goo Profitability</h1>
+				
+				<select name="towertype" class="pull-left" ng-model="active">
+					<?php foreach($towers as $t) { ?>
+						<option value="<?php echo $t['id']; ?>"<?php if($tower == $t['id']) { echo ' selected="selected"'; $tower = $t;} ?>><?php echo $t['name']; ?></option>
 					<?php } ?>
-				</tbody>
-			</table>
-			
-			<div>
-				<table class="table table-striped table-hover" id="fuel">
+				</select>
+				
+				<span class="pull-left" style="margin-left: 10px;"><input type="checkbox" ng-model="sovbonus"> Sov Fuel Bonus</span>
+				
+				<table class="table table-striped table-hover" id="minerals">
 					<thead>
 						<tr>
-							<th>&nbsp</th>
-							<th>Fuel Blocks</th>
+							<th width="30"></th>
+							<th></th>
+							<th>Mineral</th>
 							<th class="text-right">Sell (per unit)</th>
-							<th class="text-right">Buy (per unit)</th>
-							<th class="text-right">10</th>
-							<th class="text-right">20</th>
-							<th class="text-right">40</th>
+							<th class="text-right">Income</th>
+							<th class="text-right">Fuel Cost</th>
+							<th class="text-right">Profit</th>
 						</tr>
 					</thead>
-					
-					<?php
-						$blocks = array(
-							array("name" => "Amarr Fuel Block", "id" => 4247),
-							array("name" => "Gallente Fuel Block", "id" => 4312),
-							array("name" => "Minmatar Fuel Block", "id" => 4246),
-							array("name" => "Caldari Fuel Block", "id" => 4051)
-						);
-					?>
 					<tbody>
-						<?php foreach($blocks as $block) { 
-							$sell = getSell($block['id']);
-							$buy = getBuy($block['id']);
-						?>
-						<tr>
-							<td style="background: url('https://image.eveonline.com/Type/<?php echo $block['id']; ?>_32.png') no-repeat 4px 4px; width: 42px;">&nbsp</td>
-							<td><?php echo $block['name']; ?></td>
-							<td class="text-right"><?php echo isk($sell); ?></td>
-							<td class="text-right"><?php echo isk($buy); ?></td>
-							<td class="text-right"><?php echo isk($sell * 10); ?></td>
-							<td class="text-right"><?php echo isk($sell * 20); ?></td>
-							<td class="text-right"><?php echo isk($sell * 40); ?></td>
+						<?php /*foreach($minerals as $m) { 
+							$sell = getSell($m['id']);
+							$income = $sell * 100 * 24 * 30;
+							$fuelcost = getSell($tower['blockid']) * $tower['usage'] * 24 * 30;
+							$profit = $income - $fuelcost;
+							if($profit > 0) {
+								$profitclass = 'class="text-success"';
+							} else {
+								$profitclass = 'class="text-danger"';
+							}
+							*/?>
+						<tr ng-repeat="mineral in minerals">
+							<td class="r{{mineral.class}}" align="center" width="30"><strong><span class="rtype">R{{mineral.class}}</span></strong></td>
+							<td style="background: url('https://image.eveonline.com/Type/{{mineral.id}}_32.png') no-repeat 4px 4px; width: 32px;">&nbsp</td>
+							<td><a class="mineral-link" style="text-decoration: none;" href="https://eve-central.com/home/quicklook.html?typeid={{mineral.id}}">{{mineral.name}}</a></td>
+							<td align="right">{{isk(mineral.sell)}}</td>
+							<td align="right">{{isk(income(mineral.sell))}}</td>
+							<td align="right">{{isk(getFuelCost())}}</td>
+							<td align="right" class="{{profitClass(income(mineral.sell) - getFuelCost())}}">{{isk(income(mineral.sell) - getFuelCost())}}</td>
 						</tr>
-						<?php } ?>
+						<?php /*}*/ ?>
 					</tbody>
 				</table>
+				
+				<div>
+					<table class="table table-striped table-hover" id="fuel">
+						<thead>
+							<tr>
+								<th>&nbsp</th>
+								<th>Fuel Blocks</th>
+								<th class="text-right">Sell (per unit)</th>
+								<th class="text-right">Buy (per unit)</th>
+								<th class="text-right">10</th>
+								<th class="text-right">20</th>
+								<th class="text-right">40</th>
+							</tr>
+						</thead>
+						<tbody>
+							<?php foreach($blocks as $block) { 
+								$sell = getSell($block['id']);
+								$buy = getBuy($block['id']);
+							?>
+							<tr>
+								<td style="background: url('https://image.eveonline.com/Type/<?php echo $block['id']; ?>_32.png') no-repeat 4px 4px; width: 42px;">&nbsp</td>
+								<td><?php echo $block['name']; ?></td>
+								<td class="text-right"><?php echo isk($sell); ?></td>
+								<td class="text-right"><?php echo isk($buy); ?></td>
+								<td class="text-right"><?php echo isk($sell * 10); ?></td>
+								<td class="text-right"><?php echo isk($sell * 20); ?></td>
+								<td class="text-right"><?php echo isk($sell * 40); ?></td>
+							</tr>
+							<?php } ?>
+						</tbody>
+					</table>
+				</div>
+				<h6><i>* All figures based on 30 day month unless stated otherwise</i></h6>
+				<h6><i>** All figures calculated using 5th percentile sell price from <a href="https://eve-central.com/">eve-central</a></i></h6>
 			</div>
-			<h6><i>* All figures based on 30 day month unless stated otherwise</i></h6>
-			<h6><i>** All figures calculated using 5th percentile sell price from <a href="https://eve-central.com/">eve-central</a></i></h6>
 		</div>
 	</div>
 </body>
