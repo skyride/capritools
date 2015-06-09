@@ -125,7 +125,7 @@ if(!isset($_GET['data'])) {
 			$scope.towers = <? echo json_encode($towers); ?>;
 			$scope.blocks = <? echo json_encode($blocks); ?>;
 			
-			$scope.active = 16214;
+			$scope.active = $scope.towers[0].id;
 			$scope.sovbonus = false;
 			
 			$scope.isk = function(isk) {
@@ -193,9 +193,7 @@ if(!isset($_GET['data'])) {
 				<h1>Moon Goo Profitability</h1>
 				
 				<select name="towertype" class="pull-left" ng-model="active">
-					<?php foreach($towers as $t) { ?>
-						<option value="<?php echo $t['id']; ?>"<?php if($tower == $t['id']) { echo ' selected="selected"'; $tower = $t;} ?>><?php echo $t['name']; ?></option>
-					<?php } ?>
+					<option ng-repeat="tower in towers" value="{{tower.id}}">{{tower.name}}</option>
 				</select>
 				
 				<span class="pull-left" style="margin-left: 10px;"><input type="checkbox" ng-model="sovbonus"> Sov Fuel Bonus</span>
@@ -251,20 +249,15 @@ if(!isset($_GET['data'])) {
 							</tr>
 						</thead>
 						<tbody>
-							<?php foreach($blocks as $block) { 
-								$sell = getSell($block['id']);
-								$buy = getBuy($block['id']);
-							?>
-							<tr>
-								<td style="background: url('https://image.eveonline.com/Type/<?php echo $block['id']; ?>_32.png') no-repeat 4px 4px; width: 42px;">&nbsp</td>
-								<td><?php echo $block['name']; ?></td>
-								<td class="text-right"><?php echo isk($sell); ?></td>
-								<td class="text-right"><?php echo isk($buy); ?></td>
-								<td class="text-right"><?php echo isk($sell * 10); ?></td>
-								<td class="text-right"><?php echo isk($sell * 20); ?></td>
-								<td class="text-right"><?php echo isk($sell * 40); ?></td>
+							<tr ng-repeat="block in blocks">
+								<td style="background: url('https://image.eveonline.com/Type/{{block.id}}_32.png') no-repeat 4px 4px; width: 42px;">&nbsp</td>
+								<td>{{block.name}}</td>
+								<td class="text-right">{{isk(block.sell)}}</td>
+								<td class="text-right">{{isk(block.buy)}}</td>
+								<td class="text-right">{{isk(block.sell * 10)}}</td>
+								<td class="text-right">{{isk(block.sell * 20)}}</td>
+								<td class="text-right">{{isk(block.sell * 40)}}</td>
 							</tr>
-							<?php } ?>
 						</tbody>
 					</table>
 				</div>
