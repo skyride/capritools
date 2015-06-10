@@ -1,11 +1,13 @@
 <?php
 $towers = array();
-function addtower($id, $name, $blockid, $usage) {
+function addtower($id, $name, $fullName, $blockid, $usage) {
 	global $towers;
 	$t['id'] = $id;
 	$t['name'] = $name;
+	$t['fullName'] = $fullName;
 	$t['blockid'] = $blockid;
 	$t['usage'] = $usage;
+	$t['sell'] = getSell($id);
 	$towers[] = $t;
 }
 
@@ -58,18 +60,18 @@ $blocks = array(
 );
 
 //Control Tower data
-addtower(12235, "Amarr Large", 4247, 40);
-addtower(20059, "Amarr Medium", 4247, 20);
-addtower(20060, "Amarr Small", 4247, 10);
-addtower(12236, "Gallente Large", 4312, 40);
-addtower(20063, "Gallente Medium", 4312, 20);
-addtower(20064, "Gallente Small", 4312, 10);
-addtower(16214, "Minmatar Large", 4246, 40);
-addtower(20065, "Minmatar Medium", 4246, 20);
-addtower(20066, "Minmatar Small", 4246, 10);
-addtower(16213, "Caldari Large", 4051, 40);
-addtower(20061, "Caldari Medium", 4051, 20);
-addtower(20062, "Caldari Small", 4051, 10);
+addtower(12235, "Amarr Large", "Amarr Control Tower", 4247, 40);
+addtower(20059, "Amarr Medium", "Amarr Control Tower Medium", 4247, 20);
+addtower(20060, "Amarr Small", "Amarr Control Tower Small", 4247, 10);
+addtower(12236, "Gallente Large", "Gallente Control Tower", 4312, 40);
+addtower(20063, "Gallente Medium", "Gallente Control Tower Medium", 4312, 20);
+addtower(20064, "Gallente Small", "Gallente Control Tower Small", 4312, 10);
+addtower(16214, "Minmatar Large", "Minmatar Control Tower", 4246, 40);
+addtower(20065, "Minmatar Medium", "Minmatar Control Tower Medium", 4246, 20);
+addtower(20066, "Minmatar Small", "Minmatar Control Tower Small", 4246, 10);
+addtower(16213, "Caldari Large", "Caldari Control Tower", 4051, 40);
+addtower(20061, "Caldari Medium", "Caldari Control Tower Medium", 4051, 20);
+addtower(20062, "Caldari Small", "Caldari Control Tower Small", 4051, 10);
 
 
 //Mineral Data
@@ -136,11 +138,7 @@ if(!isset($_GET['data'])) {
 			$scope.getFuelCost = function() {
 				var tower = $scope.getTower($scope.active);
 				var block = $scope.getBlock(tower.blockid);
-				var cost = block.sell * tower.usage * 24 * 30;
-				if($scope.sovbonus == true) {
-					cost = cost * 0.75;
-				}
-				console.log(block);
+				var cost = block.sell * $scope.getUsage(tower.usage) * 24 * 30;
 				return cost;
 			};
 			
@@ -156,6 +154,18 @@ if(!isset($_GET['data'])) {
 				}
 			}
 			
+			$scope.getUsage = function(usage) {
+				if($scope.sovbonus == true) {
+					return Math.round(usage * 0.75);
+				} else {
+					return usage;
+				}
+			}
+			
+			
+			$scope.activeTower = function() {
+				return $scope.getTower($scope.active);
+			}
 			
 			$scope.getMineral = function(id) {
 				for(i = 0; i < $scope.minerals.length; i++) {
@@ -198,6 +208,28 @@ if(!isset($_GET['data'])) {
 				
 				<span class="pull-left" style="margin-left: 10px;"><input type="checkbox" ng-model="sovbonus"> Sov Fuel Bonus</span>
 				
+				&nbsp
+				
+				<hr />
+				
+				<div class="well well-sm" style="height: 136px;">
+					<div class="col-md-1">
+						<img class="pull-right" ng-src="https://image.eveonline.com/Type/{{activeTower().id}}_64.png">
+					</div>
+					
+					<div class="col-md-11">
+						<div>
+							<h3 style="margin-top: 0px; margin-bottom: 4px;">{{activeTower().fullName}}</h3>
+							<ul style="list-style-type: none; padding: 0px; margin: 0px;">
+								<li><b>Cost (Sell):</b> {{isk(activeTower().sell)}}</li>
+								<li><b>Hourly Usage:</b> {{getUsage(activeTower().usage)}} blocks ({{getUsage(activeTower().usage) * 5}} m3)</li>
+								<li><b>Weekly Usage:</b> {{getUsage(activeTower().usage) * 24 * 7}} blocks ({{getUsage(activeTower().usage) * 5 * 24 * 7}} m3)</li>
+								<li><b>Monthly Usage:</b> {{getUsage(activeTower().usage) * 24 * 30}} blocks ({{getUsage(activeTower().usage) * 5 * 24 * 30}} m3)</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+				
 				<table class="table table-striped table-hover" id="minerals">
 					<thead>
 						<tr>
@@ -211,17 +243,6 @@ if(!isset($_GET['data'])) {
 						</tr>
 					</thead>
 					<tbody>
-						<?php /*foreach($minerals as $m) { 
-							$sell = getSell($m['id']);
-							$income = $sell * 100 * 24 * 30;
-							$fuelcost = getSell($tower['blockid']) * $tower['usage'] * 24 * 30;
-							$profit = $income - $fuelcost;
-							if($profit > 0) {
-								$profitclass = 'class="text-success"';
-							} else {
-								$profitclass = 'class="text-danger"';
-							}
-							*/?>
 						<tr ng-repeat="mineral in minerals">
 							<td class="r{{mineral.class}}" align="center" width="30"><strong><span class="rtype">R{{mineral.class}}</span></strong></td>
 							<td style="background: url('https://image.eveonline.com/Type/{{mineral.id}}_32.png') no-repeat 4px 4px; width: 32px;">&nbsp</td>
@@ -234,6 +255,8 @@ if(!isset($_GET['data'])) {
 						<?php /*}*/ ?>
 					</tbody>
 				</table>
+				
+				<hr />
 				
 				<div>
 					<table class="table table-striped table-hover" id="fuel">
