@@ -147,7 +147,6 @@ app.controller('myCtrl', function($scope, $http, $location) {
 					break;
 					
 				default:
-					console.log(attributes[i].value);
 					attributes[i].displayValue = attributes[i].value + " " + attributes[i].unit;
 			}
 		}

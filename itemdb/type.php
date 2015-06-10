@@ -19,6 +19,36 @@ $row = $st->fetch(PDO::FETCH_ASSOC);
 //Begin building object
 $type = $row;
 
+
+//Get traits
+$st = $db->prepare("SELECT skillID,invTypes.typeName as skillName, bonus, displayName as unit, bonusText FROM invTraits LEFT JOIN invTypes ON invTraits.skillID = invTypes.typeID LEFT JOIN eveUnits ON invTraits.unitID = eveUnits.unitID WHERE invTraits.typeID = :typeid ORDER BY skillID DESC");
+$st->bindValue(":typeid", $_GET['type'], PDO::PARAM_INT);
+$st->execute();
+$rows = $st->fetchAll(PDO::FETCH_ASSOC);
+
+$last = "dfgjdfkgfghdf";
+$bonustext = "<br /><br />";
+foreach($rows as $row) {
+	if($last != $row['skillID']) {
+		if($row['skillID'] != -1) {
+			$bonustext .= "</ul><b>".$row['skillName']." bonuses (per skill level):</b><br />";
+		} else {
+			$bonustext .= "</ul><b>Role Bonus:</b><br />";
+		}
+		$last = $row['skillID'];
+		$bonustext .= "<ul>";
+	}
+	
+	$bonustext .= "<li>" . $row['bonus'] . $row['unit'] . " " . $row['bonusText'] . "</li>";
+}
+
+//Replace bonus links with links back to item types
+$bonustext = preg_replace("/<a href=showinfo:([0-9]+)>/", '', $bonustext);
+$bonustext = str_replace("</a>", "", $bonustext);
+
+$type['description'] .= $bonustext;
+
+
 //Get attributes
 $st = $db->prepare("SELECT dgmTypeAttributes.typeID, dgmTypeAttributes.attributeID, dgmTypeAttributes.valueInt, dgmTypeAttributes.valueFloat,
 dgmAttributeTypes.attributeName, dgmAttributeTypes.description, dgmAttributeTypes.iconID, dgmAttributeTypes.displayName, dgmAttributeTypes.categoryID,
