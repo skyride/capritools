@@ -1,0 +1,25 @@
+.mono {
+	font-family: "Lucida Console", Monaco, monospace;
+}
+
+#searchclear {
+    position: absolute;
+    right: 13px;
+    top: 0;
+    bottom: 0;
+    height: 14px;
+    margin: auto;
+    font-size: 14px;
+    cursor: pointer;
+    color: #ccc;
+}
+
+.searchcol-in {
+	width: 40%;
+	transition: width .3s ease;
+}
+
+.searchcol-out {
+	width: 20%;
+	transition: width .3s ease;
+}
