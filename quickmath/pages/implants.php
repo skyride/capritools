@@ -102,32 +102,32 @@ for($i = 0; $i < count($rows); $i++) {
 								<?php $total = 0; ?>
 								<tr>
 									<td style="background: url('https://image.eveonline.com/Type/20499_32.png') no-repeat 4px 4px; width: 42px;">&nbsp</td>
-									<td><a href="https://eve-central.com/home/quicklook.html?typeid=<?php echo $implants[$set." Alpha"]['typeId']; ?>">Alpha</a></td>
+									<td><a href="/itemdb/#/<?php echo $implants[$set." Alpha"]['typeId']; ?>">Alpha</a></td>
 									<td><?php echo isk($implants[$set." Alpha"]['sell']); $total += $implants[$set." Alpha"]['sell']; ?></td>
 								</tr>
 								<tr>
 									<td style="background: url('https://image.eveonline.com/Type/20501_32.png') no-repeat 4px 4px; width: 42px;">&nbsp</td>
-									<td><a href="https://eve-central.com/home/quicklook.html?typeid=<?php echo $implants[$set." Beta"]['typeId']; ?>">Beta</a></td>
+									<td><a href="/itemdb/#/<?php echo $implants[$set." Beta"]['typeId']; ?>">Beta</a></td>
 									<td><?php echo isk($implants[$set." Beta"]['sell']); $total += $implants[$set." Beta"]['sell']; ?></td>
 								</tr>
 								<tr>
 									<td style="background: url('https://image.eveonline.com/Type/20507_32.png') no-repeat 4px 4px; width: 42px;">&nbsp</td>
-									<td><a href="https://eve-central.com/home/quicklook.html?typeid=<?php echo $implants[$set." Gamma"]['typeId']; ?>">Gamma</a></td>
+									<td><a href="/itemdb/#/<?php echo $implants[$set." Gamma"]['typeId']; ?>">Gamma</a></td>
 									<td><?php echo isk($implants[$set." Gamma"]['sell']); $total += $implants[$set." Gamma"]['sell']; ?></td>
 								</tr>
 								<tr>
 									<td style="background: url('https://image.eveonline.com/Type/20503_32.png') no-repeat 4px 4px; width: 42px;">&nbsp</td>
-									<td><a href="https://eve-central.com/home/quicklook.html?typeid=<?php echo $implants[$set." Delta"]['typeId']; ?>">Delta</a></td>
+									<td><a href="/itemdb/#/<?php echo $implants[$set." Delta"]['typeId']; ?>">Delta</a></td>
 									<td><?php echo isk($implants[$set." Delta"]['sell']); $total += $implants[$set." Delta"]['sell']; ?></td>
 								</tr>
 								<tr>
 									<td style="background: url('https://image.eveonline.com/Type/20505_32.png') no-repeat 4px 4px; width: 42px;">&nbsp</td>
-									<td><a href="https://eve-central.com/home/quicklook.html?typeid=<?php echo $implants[$set." Epsilon"]['typeId']; ?>">Epsilon</a></td>
+									<td><a href="/itemdb/#/<?php echo $implants[$set." Epsilon"]['typeId']; ?>">Epsilon</a></td>
 									<td><?php echo isk($implants[$set." Epsilon"]['sell']); $total += $implants[$set." Epsilon"]['sell']; ?></td>
 								</tr>
 								<tr>
 									<td style="background: url('https://image.eveonline.com/Type/20509_32.png') no-repeat 4px 4px; width: 42px;">&nbsp</td>
-									<td><a href="https://eve-central.com/home/quicklook.html?typeid=<?php echo $implants[$set." Omega"]['typeId']; ?>">Omega</a></td>
+									<td><a href="/itemdb/#/<?php echo $implants[$set." Omega"]['typeId']; ?>">Omega</a></td>
 									<td><?php echo isk($implants[$set." Omega"]['sell']); $total += $implants[$set." Omega"]['sell']; ?></td>
 								</tr>
 							</tbody>
