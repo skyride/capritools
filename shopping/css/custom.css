@@ -52,3 +52,7 @@
     -ms-user-select: none;
     user-select: none;
 }
+
+input {
+    color: #111111;
+}
