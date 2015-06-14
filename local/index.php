@@ -3,7 +3,7 @@ include("functions.php");
 
 //Parse local scan
 if(isset($_POST['paste'])) {
-	$lscan = buildFromList(explode("\n", $_POST['paste']));
+	$lscan = buildFromListNew(explode("\n", $_POST['paste']));
 	$key = saveLScan($lscan);
 	file_put_contents("scans/".$key, $_POST['paste']);
 	header('Location: /local/'.$key);
