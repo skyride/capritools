@@ -441,6 +441,157 @@ function buildFromList($chars) {
 }
 
 
+//Builds the return object
+function buildFromListNew($charlist) {
+	//Connect to Redis and get as many characters as possible
+	$redis = new Redis;
+	$redis->connect("127.0.0.1");
+	$unknowns = array();
+	$chars = array();
+	foreach($charlist as $char) {
+		$char = str_replace("\r", "", $char);
+		$res = $redis->get("capritools-char-".$char);
+		if($res == false) {
+			$unknowns[] = $char;
+		} else {
+			$chars[] = json_decode($res, true);
+		}
+	}
+	
+	if(count($unknowns) > 0) {
+		//Get unknowns to ids using eve api
+		$url = "https://api.eveonline.com/eve/CharacterID.xml.aspx";
+		$data = array('names' => implode(",", $unknowns));
+		$options = array(
+			'http' => array (
+				'header'	=> "Content-type: application/x-www-form-urlencoded\r\n",
+				'method'	=> 'POST',
+				'content'	=> http_build_query($data)
+			)
+		);
+		$context = stream_context_create($options);
+		$xml = file_get_contents($url, false, $context);
+		$xml = new SimpleXMLElement($xml);
+		$unknownids = array();
+		foreach($xml->result->rowset->row as $row) {
+			$unknownids[] = $row['characterID'];
+		}
+		
+		//Populate unknown chars from API
+		$chunks = array_chunk($unknownids, 250);
+		$unknownchars = array();
+		foreach($chunks as $chunk) {
+			$url = "https://api.eveonline.com/eve/CharacterAffiliation.xml.aspx";
+			$data = array('ids' => implode(",", $chunk));
+			$options = array(
+				'http' => array (
+					'header'	=> "Content-type: application/x-www-form-urlencoded\r\n",
+					'method'	=> 'POST',
+					'content'	=> http_build_query($data)
+				)
+			);
+			$context = stream_context_create($options);
+			$xml = file_get_contents($url, false, $context);
+			$xml = new SimpleXMLElement($xml);
+			foreach($xml->result->rowset->row as $row) {
+				$char = array();
+				$char['characterID'] = (string) $row['characterID'];
+				$char['characterName'] = (string) $row['characterName'];
+				$char['corporationID'] = (string) $row['corporationID'];
+				$char['allianceID'] = (string) $row['allianceID'];
+				$unknownchars[] = $char;
+				$redis->set("capritools-char-".$char['characterName'], json_encode($char), 3600);
+			}
+		}
+	
+		//Merge unknown chars into the full list
+		$chars = array_merge($chars, $unknownchars);
+	}
+	
+	//Calculate corp/alliance quantities and build associations
+	$corps = array();
+	$alliances = array();
+	$assocs = array();
+	foreach($chars as $char) {
+		if($char['corporationID'] > 0) {
+			$corps[$char['corporationID']]++;
+		}
+		
+		if($char['allianceID'] > 0) {
+			$alliances[$char['allianceID']]++;
+			
+			//Add associations
+			//Alliance -> Corp
+			$assocs[$char['allianceID']][] = $char['corporationID'];
+			
+			//Corp -> Alliance
+			$assocs[$char['corporationID']][] = $char['allianceID'];
+		}
+	}
+	
+	//Clean up association duplicates
+	foreach(array_keys($assocs) as $key) {
+		$assocs[$key] = array_unique($assocs[$key]);
+	}
+	
+	//Sort by the number of characters from them
+	arsort($corps);
+	arsort($alliances);
+	
+	//Get corps
+	$corplist = array();
+	foreach(array_keys($corps) as $id) {
+		$res = $redis->get("capritools-corp-".$id);
+		if($res == false) {
+			$json = json_decode(file_get_contents("http://evewho.com/api.php?type=corporation&id=".$id), true)['info'];
+			$corp['id'] = $json['corporation_id'];
+			$corp['name'] = $json['name'];
+			$corp['ticker'] = $json['ticker'];
+			
+			//Save to redis
+			$redis->set("capritools-corp-".$id, json_encode($corp));
+			
+			//Put in corp list
+			$corplist[] = $corp;
+		} else {
+			$corp = json_decode($res, true);
+			$corp['quantity'] = $corps[$id];
+			//Put in corp list
+			$corplist[] = $corp;
+		}
+	}
+	
+	//Get alliances
+	$alliancelist = array();
+	foreach(array_keys($alliances) as $id) {
+		$res = $redis->get("capritools-alliance-".$id);
+		if($res == false) {
+			$json = json_decode(file_get_contents("http://evewho.com/api.php?type=alliance&id=".$id), true)['info'];
+			$alliance['id'] = $json['alliance_id'];
+			$alliance['name'] = $json['name'];
+			$alliance['ticker'] = $json['ticker'];
+			
+			//Save to redis
+			$redis->set("capritools-alliance-".$id, json_encode($alliance));
+			
+			//Put in alliance list
+			$alliancelist[] = $alliance;
+		} else {
+			$alliance = json_decode($res, true);
+			$alliance['quantity'] = $alliances[$id];
+			//Put in corp list
+			$alliancelist[] = $alliance;
+		}
+	}
+	
+	//Build return object
+	$obj['corps'] = $corplist;
+	$obj['alliances'] = $alliancelist;
+	$obj['assocs'] = $assocs;
+	
+	return $obj;
+}
+
 
 //$chars = explode("\n", file_get_contents("test4.txt"));
 
