@@ -531,7 +531,7 @@ function buildFromListNew($charlist) {
 	
 	//Clean up association duplicates
 	foreach(array_keys($assocs) as $key) {
-		$assocs[$key] = array_unique($assocs[$key]);
+		$assocs[$key] = array_values(array_unique($assocs[$key]));
 	}
 	
 	//Sort by the number of characters from them
@@ -543,13 +543,28 @@ function buildFromListNew($charlist) {
 	foreach(array_keys($corps) as $id) {
 		$res = $redis->get("capritools-corp-".$id);
 		if($res == false) {
-			$json = json_decode(file_get_contents("http://evewho.com/api.php?type=corporation&id=".$id), true)['info'];
-			$corp['id'] = $json['corporation_id'];
-			$corp['name'] = $json['name'];
-			$corp['ticker'] = $json['ticker'];
+			$url = "https://api.eveonline.com/corp/CorporationSheet.xml.aspx";
+			$data = array('corporationID' => $id);
+			$options = array(
+				'http' => array (
+					'header'	=> "Content-type: application/x-www-form-urlencoded\r\n",
+					'method'	=> 'POST',
+					'content'	=> http_build_query($data)
+				)
+			);
+			$context = stream_context_create($options);
+			$xml = file_get_contents($url, false, $context);
+			$xml = new SimpleXMLElement($xml);
+			
+			$corp = array();
+			$corp['id'] = $id;
+			$corp['name'] = (string) $xml->result->corporationName;
+			$corp['ticker'] = (string) $xml->result->ticker;
 			
 			//Save to redis
 			$redis->set("capritools-corp-".$id, json_encode($corp));
+			
+			$corp['quantity'] = $corps[$id];
 			
 			//Put in corp list
 			$corplist[] = $corp;
@@ -563,16 +578,29 @@ function buildFromListNew($charlist) {
 	
 	//Get alliances
 	$alliancelist = array();
+	$xml = false;
 	foreach(array_keys($alliances) as $id) {
 		$res = $redis->get("capritools-alliance-".$id);
 		if($res == false) {
-			$json = json_decode(file_get_contents("http://evewho.com/api.php?type=alliance&id=".$id), true)['info'];
-			$alliance['id'] = $json['alliance_id'];
-			$alliance['name'] = $json['name'];
-			$alliance['ticker'] = $json['ticker'];
+			unset($alliance);
+			if($xml === false) {
+				$url = "https://api.eveonline.com/eve/AllianceList.xml.aspx";
+				$xml = file_get_contents($url);
+				$xml = new SimpleXMLElement($xml);
+			}
+			
+			foreach($xml->result->rowset->row as $row) {
+				if($row['allianceID'] == $id) {
+					$alliance['id'] = $id;
+					$alliance['name'] = (string) $row['name'];
+					$alliance['ticker'] = (string) $row['shortName'];
+				}
+			}
 			
 			//Save to redis
 			$redis->set("capritools-alliance-".$id, json_encode($alliance));
+			
+			$alliance['quantity'] = $alliances[$id];
 			
 			//Put in alliance list
 			$alliancelist[] = $alliance;
