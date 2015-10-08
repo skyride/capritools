@@ -5,7 +5,7 @@ include("simple_html_dom.php");
 
 //Connect MySQL
 $db = new PDO('mysql:host='.$mysql_host.';dbname='.$mysql_db.';charset=utf8', $mysql_user, $mysql_pass);
-
+$odb = new PDO('mysql:host='.$mysql_host.';dbname=oceanus;charset=utf8', $mysql_user, $mysql_pass);
 
 
 function saveHit() {
@@ -23,6 +23,26 @@ function saveHit() {
 	$st->bindValue(":referrer", $_SERVER['HTTP_REFERER'], PDO::PARAM_STR);
 	$st->bindValue(":page", $_SERVER["REQUEST_URI"], PDO::PARAM_STR);
 	$st->execute();
+}
+
+
+
+function getSystemInfo($name) {
+	global $odb;
+	
+	$st = $odb->prepare("SELECT solarSystemName, constellationName, regionName, ROUND(security, 1) as security
+	FROM `mapSolarSystems`
+	INNER JOIN `mapConstellations` ON mapConstellations.constellationID = mapSolarSystems.constellationID
+	INNER JOIN `mapRegions` ON mapRegions.regionID = mapSolarSystems.regionID
+	WHERE solarSystemName = :name");
+	$st->bindValue(":name", $name, PDO::PARAM_STR);
+	$st->execute();
+	$rows = $st->fetchAll(PDO::FETCH_ASSOC);
+	if(count($rows) > 0) {
+		return $rows[0];
+	} else {
+		return null;
+	}
 }
 
 
@@ -107,7 +127,7 @@ function getPaste($key) {
 
 
 //Saves the local and returns the key
-function saveLScan($lscan) {
+function saveLScan($lscan, $system = "") {
 	global $db;
 	
 	//Save the json object in the pastebin dumb system
@@ -120,8 +140,9 @@ function saveLScan($lscan) {
 	}
 	
 	//Create scan entry
-	$st = $db->prepare("INSERT INTO lscanScans(`created`, `ip`, `pasteKey`, `total`) VALUES (UNIX_TIMESTAMP(), :ip, :pasteKey, :total)");
+	$st = $db->prepare("INSERT INTO lscanScans(`created`, `ip`, `system`, `pasteKey`, `total`) VALUES (UNIX_TIMESTAMP(), :ip, :system, :pasteKey, :total)");
 	$st->bindValue(":ip", $_SERVER['REMOTE_ADDR'], PDO::PARAM_STR);
+	$st->bindValue(":system", $system, PDO::PARAM_STR);
 	$st->bindValue(":pasteKey", $pasteKey, PDO::PARAM_STR);
 	$st->bindValue(":total", $total, PDO::PARAM_INT);
 	$st->execute();

@@ -3,3 +3,5 @@ RewriteEngine On
 RewriteRule	^([0-9a-zA-Z]+)$ lscan.php?key=$1
 RewriteRule	^([0-9a-zA-Z]+)/raw$ scans/$1
 RewriteRule	^([0-9a-zA-Z]+)/full$ charprint.php?key=$1
+RewriteRule ^systems.json$ systems.php?format=json
+RewriteRule ^systems.csv$ systems.php?format=csv

@@ -35,3 +35,47 @@ line-height: 20px;
 .selected {
 	box-shadow: inset 0px 0px 6px 0px rgba(255,255,255,1);
 }
+
+.tt-menu {
+	width: 100%;
+	background-color: #FFFFFF;
+	border: 2px solid #2c3e50;
+	max-height: 250px;
+	overflow-y: auto;
+}
+
+.tt-selectable {
+	padding: 10px 15px;
+}
+
+.tt-highlight {
+	color: #18bc9c;
+}
+
+.sysbar {
+	background-color: #2c3e50;
+	color: #FFFFFF;
+}
+
+.sec {
+	float: left;
+	width: 26px;
+	text-align: right;
+	margin-right: 7px;
+}
+
+.system-details {
+	color: #b4bcc2;
+}
+
+.sec-1-0 { color: #2FEFEF; }
+.sec-0-9 { color: #48F0C0; }
+.sec-0-8 { color: #00EF47; }
+.sec-0-7 { color: #00F000; }
+.sec-0-6 { color: #8FEF2F; }
+.sec-0-5 { color: #EFEF00; }
+.sec-0-4 { color: #D77700; }
+.sec-0-3 { color: #F06000; }
+.sec-0-2 { color: #F04800; }
+.sec-0-1 { color: #D73000; }
+.sec-0-0 { color: #F00000; }

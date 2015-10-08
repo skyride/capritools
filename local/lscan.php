@@ -5,8 +5,20 @@ include("display.php");
 $lscan = getLScan($_GET['key']);
 $lscaninfo = getLScanInfo($_GET['key']);
 $assocs = json_encode($lscan['assocs']);
+$system = getSystemInfo($lscaninfo['system']);
 
-saveHit();
+//Process system text
+if($system != null) {
+	if(sys.security <= 0) {
+		$secClass = "sec-0-0";
+	} else {
+		$sec = str_replace(".", ",", $system['security']);
+		$secClass = "sec-" + $sec;
+	}
+	$systemtext = "<span class='".$secClass."' style='margin-right: 4px;'>" . $system['security'] . "</span> " . $system['solarSystemName'] . " <span class='system-details'>&lt; " . $system['constellationName'] . " &lt; " . $system['regionName'] . "</span><br />";
+}
+
+//saveHit();
 ?>
 <head>
 	<meta charset="utf-8">
@@ -38,6 +50,7 @@ var assocs = <?php echo $assocs; ?>;
 			<div class="col-lg-12">
 			<div class="panel panel-primary">
 				<div class="panel-heading">
+					<?php echo $systemtext; ?>
 					Total Characters: <strong><?php echo $lscaninfo['total']; ?></strong><span class="pull-right"><strong>Created:</strong> <?php echo date("d/m/y H:i", $lscaninfo['created']); ?> EVE Time</span>
 				</div>
 				
