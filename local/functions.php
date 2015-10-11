@@ -30,7 +30,7 @@ function saveHit() {
 function getSystemInfo($name) {
 	global $odb;
 	
-	$st = $odb->prepare("SELECT solarSystemName, constellationName, regionName, ROUND(security, 1) as security
+	$st = $odb->prepare("SELECT solarSystemName, constellationName, regionName, security
 	FROM `mapSolarSystems`
 	INNER JOIN `mapConstellations` ON mapConstellations.constellationID = mapSolarSystems.constellationID
 	INNER JOIN `mapRegions` ON mapRegions.regionID = mapSolarSystems.regionID
@@ -39,7 +39,16 @@ function getSystemInfo($name) {
 	$st->execute();
 	$rows = $st->fetchAll(PDO::FETCH_ASSOC);
 	if(count($rows) > 0) {
-		return $rows[0];
+		//Fix stupid 0.1 sec status round mistakes
+		$row = $rows[0];
+		if($row['security'] > 0 && $row['security'] < 0.1) {
+			$row['security'] = 0.1;
+		} else {
+			$row['security'] = round($row['security'], 1);
+			break;
+		}
+		
+		return $row;
 	} else {
 		return null;
 	}

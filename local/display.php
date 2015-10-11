@@ -42,6 +42,8 @@ function allianceBar($lscan, $total) {
 	
 	$styles = array("asd", "info", "success", "warning", "danger");
 	
+	$html = "";
+	$totalsize = 0;
 	foreach($elements as $e) {
 		$style = next($styles);
 		if($style === false) {
@@ -85,6 +87,7 @@ function corpBar($lscan, $total) {
 	$styles = array("asd", "info", "success", "warning", "danger");
 	
 	$totalsize = 0;
+	$html = "";
 	foreach($elements as $e) {
 		$style = next($styles);
 		if($style === false) {
