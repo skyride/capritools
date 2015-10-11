@@ -9,11 +9,11 @@ $system = getSystemInfo($lscaninfo['system']);
 
 //Process system text
 if($system != null) {
-	if(sys.security <= 0) {
+	if($system['security'] <= 0) {
 		$secClass = "sec-0-0";
 	} else {
-		$sec = str_replace(".", ",", $system['security']);
-		$secClass = "sec-" + $sec;
+		$sec = str_replace(".", "-", $system['security']);
+		$secClass = "sec-" . $sec;
 	}
 	$systemtext = "<span class='".$secClass."' style='margin-right: 4px;'>" . $system['security'] . "</span> " . $system['solarSystemName'] . " <span class='system-details'>&lt; " . $system['constellationName'] . " &lt; " . $system['regionName'] . "</span><br />";
 }
