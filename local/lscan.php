@@ -50,7 +50,7 @@ var assocs = <?php echo $assocs; ?>;
 			<div class="col-lg-12">
 			<div class="panel panel-primary">
 				<div class="panel-heading">
-					<?php echo $systemtext; ?>
+					<?php if(isset($systemtext)) { echo $systemtext; } ?>
 					Total Characters: <strong><?php echo $lscaninfo['total']; ?></strong><span class="pull-right"><strong>Created:</strong> <?php echo date("d/m/y H:i", $lscaninfo['created']); ?> EVE Time</span>
 				</div>
 				

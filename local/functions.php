@@ -44,8 +44,7 @@ function getSystemInfo($name) {
 		if($row['security'] > 0 && $row['security'] < 0.1) {
 			$row['security'] = 0.1;
 		} else {
-			$row['security'] = round($row['security'], 1);
-			break;
+			$row['security'] = number_format(round($row['security'], 1), 1);
 		}
 		
 		return $row;
