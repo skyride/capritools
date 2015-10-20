@@ -91,6 +91,10 @@ addmineral(16640, "Cobalt", 8);
 addmineral(16639, "Scandium", 8);
 addmineral(16638, "Titanium", 8);
 addmineral(16637, "Tungsten", 8);
+addmineral(16634, "Atmospheric Gases", 4);
+addmineral(16635, "Evaporate Deposits", 4);
+addmineral(16633, "Hydrocarbons", 4);
+addmineral(16636, "Silicates", 4);
 
 
 //Check active tower
