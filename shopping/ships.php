@@ -39,5 +39,7 @@ $ships["Assault Frigate"] = 2500;
 $ships["Combat Battlecruiser"] = 15000;
 $ships["Rookie ship"] = 2500;
 $ships["Expedition Frigate"] = 2500;
+$ships["Logistics Frigate"] = 2500;
+$ships["Command Destroyers"] = 5000;
 
 ?>

@@ -10,15 +10,12 @@ include("config.php");
 if((time() - 86400) > filemtime("itemscache") || isset($_GET['debug'])) {
 	include("ships.php");
 	$db = new PDO('mysql:host='.$mysql_host.';dbname='.$mysql_db.';charset=utf8', $mysql_user, $mysql_pass);
-	$st = $db->prepare("SELECT invTypes.typeID, typeName, volume, groupName, metaGroupID, marketGroupID FROM `invTypes` 
+	$st = $db->prepare("SELECT invTypes.typeID, typeName, groupName, COALESCE(invVolumes.volume, invTypes.volume) AS volume FROM `invTypes` 
 JOIN invGroups ON invGroups.groupID = invTypes.groupID
-RIGHT JOIN invMetaTypes ON invMetaTypes.typeID = invTypes.typeID
-WHERE marketGroupID IS NOT NULL
-UNION
-SELECT invTypes.typeID, typeName, volume, groupName, metaGroupID, marketGroupID FROM `invTypes` 
-JOIN invGroups ON invGroups.groupID = invTypes.groupID
-LEFT JOIN invMetaTypes ON invMetaTypes.typeID = invTypes.typeID
-WHERE marketGroupID IS NOT NULL ORDER BY case when metaGroupID IS NULL then 15 end ASC, metaGroupID, marketGroupID, typeName");
+LEFT JOIN invVolumes ON invVolumes.typeid = invTypes.typeID
+INNER JOIN dgmTypeAttributes ON dgmTypeAttributes.typeID = invTypes.typeID
+WHERE invTypes.marketGroupID IS NOT NULL AND  dgmTypeAttributes.attributeID = 633
+ORDER BY invTypes.volume DESC, marketGroupID ASC, COALESCE(dgmTypeAttributes.valueInt, dgmTypeAttributes.valueFloat) ASC");
 	$st->execute();
 	$rows = $st->fetchAll(PDO::FETCH_ASSOC);
 	
@@ -27,7 +24,7 @@ WHERE marketGroupID IS NOT NULL ORDER BY case when metaGroupID IS NULL then 15 e
 		if(isset($ships[$rows[$i]['groupName']])) {
 			$rows[$i]['volume'] = $ships[$rows[$i]['groupName']];
 		}
-		unset($rows[$i]['groupName']);
+		//unset($rows[$i]['groupName']);
 	}
 	
 	$items = json_encode($rows);
