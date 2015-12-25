@@ -24,7 +24,7 @@ ORDER BY invTypes.volume DESC, marketGroupID ASC, COALESCE(dgmTypeAttributes.val
 		if(isset($ships[$rows[$i]['groupName']])) {
 			$rows[$i]['volume'] = $ships[$rows[$i]['groupName']];
 		}
-		//unset($rows[$i]['groupName']);
+		unset($rows[$i]['groupName']);
 	}
 	
 	$items = json_encode($rows);
