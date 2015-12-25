@@ -42,4 +42,6 @@ $classcolour['Stealth Bomber'] = "active";
 $classcolour['Strategic Cruiser'] = "active";
 $classcolour['Supercarrier'] = "danger";
 $classcolour['Titan'] = "danger";
+$classcolour['Logistics Frigate'] = "success";
+$classcolour['Command Destroyers'] = "success";
 ?>
