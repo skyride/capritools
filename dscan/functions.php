@@ -380,7 +380,7 @@ function getDscanShipTypesSubs($key) {
 	//Get objects for scan
 	$id = $rows[0]['id'];
 	$st = $db->prepare("SELECT groups.groupName as type, count(*) as quantity, groupName FROM dscanObjects INNER JOIN oceanus.invTypes as ships ON ships.typeName=dscanObjects.type INNER JOIN oceanus.invGroups as groups ON groups.groupID = ships.groupID
-	WHERE scan=:scan AND ships.groupID NOT IN(30, 659, 485, 547, 883, 902) AND groups.categoryID = 6 GROUP BY groups.groupName ORDER BY quantity DESC");
+	WHERE scan=:scan AND ships.groupID NOT IN(30, 659, 485, 547, 883, 902, 1538) AND groups.categoryID = 6 GROUP BY groups.groupName ORDER BY quantity DESC");
 	$st->bindValue(":scan", $id, PDO::PARAM_STR);
 	$st->execute();
 	$rows = $st->fetchAll(PDO::FETCH_ASSOC);
@@ -408,7 +408,7 @@ function getDscanShipTypesCaps($key) {
 	//Get objects for scan
 	$id = $rows[0]['id'];
 	$st = $db->prepare("SELECT groups.groupName as type, count(*) as quantity, groupName FROM dscanObjects INNER JOIN oceanus.invTypes as ships ON ships.typeName=dscanObjects.type INNER JOIN oceanus.invGroups as groups ON groups.groupID = ships.groupID
-	WHERE scan=:scan AND ships.groupID IN(30, 659, 485, 547, 883, 902) AND groups.categoryID = 6 GROUP BY groups.groupName ORDER BY quantity DESC");
+	WHERE scan=:scan AND ships.groupID IN(30, 659, 485, 547, 883, 902, 1538) AND groups.categoryID = 6 GROUP BY groups.groupName ORDER BY quantity DESC");
 	$st->bindValue(":scan", $id, PDO::PARAM_STR);
 	$st->execute();
 	$rows = $st->fetchAll(PDO::FETCH_ASSOC);
