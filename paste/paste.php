@@ -52,7 +52,7 @@ $info = getPasteInfo($_GET['key']);
 	<div class="container">
 		<div class="starter-template">
 			<h1>Pastebin Tool</h1>
-				<pre id="data" class="content-area" ondblclick="fnSelect('data');"><? echo htmlspecialchars($paste); ?></pre>
+				<div id="data" class="well content-area" ondblclick="fnSelect('data');"><? echo htmlspecialchars($paste); ?></div>
 				<div>
 					<span class="text-muted"><?php echo strlen($paste); ?> characters | <?php echo mb_strlen($paste); ?> bytes</span><br />
 					<span class="text-muted">Created: <?php echo date("d/m/y H:i", $info['created']); ?></span>

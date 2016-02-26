@@ -1,3 +1,13 @@
 .mono {
 	font-family: "Lucida Console", Monaco, monospace;
 }
+
+#data {
+	color: #7b8a8b;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    /* font-family: Menlo,Monaco,Consolas,"Courier New",monospace; */
+    /* font-size: 14px; */
+    padding: 8px;
+    border: 1px solid #cccccc;
+}
