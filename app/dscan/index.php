@@ -11,6 +11,8 @@ if(isset($_POST['dscan'])) {
 	$key = saveDscan($objects);
 	
 	//Save to file
+    if (!file_exists("scans"))
+        mkdir("scans");
 	file_put_contents("scans/".$key, $dscan);
 	
 	header('Location: /dscan/'.$key);

@@ -1,6 +1,6 @@
 <?php
 include("../config.php");
-$db = new PDO('mysql:host='.$mysql_host.';dbname=oceanus;charset=utf8', $mysql_user, $mysql_pass);
+$db = new PDO('mysql:host='.$mysql_host.';dbname=sde;charset=utf8', $mysql_user, $mysql_pass);
 
 function isk($isk) {
 	return number_format($isk, 2, '.', ',') . " ISK";
