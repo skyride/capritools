@@ -5,7 +5,7 @@ header("Cache-Control: max-age=3600");
 include("config.php");
 
 
-$db = new PDO('mysql:host='.$mysql_host.';dbname=oceanus;charset=utf8', $mysql_user, $mysql_pass);
+$db = new PDO('mysql:host='.$mysql_host.';dbname=sde;charset=utf8', $mysql_user, $mysql_pass);
 $st = $db->prepare("SELECT solarSystemName as n, constellationName as c, regionName as r, security as s
 	FROM `mapSolarSystems`
 	INNER JOIN `mapRegions` ON mapSolarSystems.regionID = mapRegions.regionID

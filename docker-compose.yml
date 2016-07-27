@@ -1,0 +1,19 @@
+web:
+    image: nginx:latest
+    ports:
+        - "8080:80"
+    volumes:
+        - ./app:/usr/src/app
+        - ./site.conf:/etc/nginx/conf.d/default.conf
+    links:
+        - app
+app:
+    build: .
+    volumes:
+        - ./app:/usr/src/app
+    links:
+        - mysql
+mysql:
+    image: mysql:latest
+    environment:
+        MYSQL_ALLOW_EMPTY_PASSWORD: 1

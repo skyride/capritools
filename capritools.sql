@@ -77,7 +77,7 @@ CREATE TABLE IF NOT EXISTS `dscanScans` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `created` int(11) NOT NULL,
   `ip` varchar(15) NOT NULL,
-  `key` varchar(40) NOT NULL,
+  `key` varchar(40) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=ascii AUTO_INCREMENT=1725 ;
 

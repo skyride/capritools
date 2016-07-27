@@ -5,7 +5,7 @@ include("simple_html_dom.php");
 
 //Connect MySQL
 $db = new PDO('mysql:host='.$mysql_host.';dbname='.$mysql_db.';charset=utf8', $mysql_user, $mysql_pass);
-$odb = new PDO('mysql:host='.$mysql_host.';dbname=oceanus;charset=utf8', $mysql_user, $mysql_pass);
+$odb = new PDO('mysql:host='.$mysql_host.';dbname=sde;charset=utf8', $mysql_user, $mysql_pass);
 
 
 function saveHit() {
