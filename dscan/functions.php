@@ -34,7 +34,7 @@ function parseDscan($dscan) {
 	//Iterate through our rows
 	foreach($rows as $row) {
 		//Check if it matches a dscan row format
-		if(preg_match("/^([^\t]+)\t([^\t]+)\t(([0-9,.]+) (km|m|AU)|-)/", $row, $matches) == 1) {
+		if(preg_match("/^([^\t]+)\t([^\t]+)\t(([0-9,.\s]+) (km|m|AU)|-)/", $row, $matches) == 1) {
 			$ob['type'] = $matches[2];
 			$ob['name'] = $matches[1];
 			
